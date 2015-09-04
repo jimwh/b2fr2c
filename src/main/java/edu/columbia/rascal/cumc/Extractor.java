@@ -10,8 +10,6 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Component
 public class Extractor {
@@ -36,12 +34,11 @@ public class Extractor {
 
     private static final Logger log = LoggerFactory.getLogger(Extractor.class);
     private final JdbcTemplate jdbcTemplate;
-    private static final String RootDir = "/tmp/rascal_to_cumc";
+    public static final String RootDir = "/tmp/rascal_to_cumc";
 
     @Autowired
     public Extractor(JdbcTemplate jt) {
         this.jdbcTemplate = jt;
-        System.setProperty("user.dir", "/tmp");
     }
 
     public void start() {
@@ -54,10 +51,14 @@ public class Extractor {
             }
         }
         extractMapper();
+
+        DateTime dateTime = DateTime.now();
+        String zipFileName = "/tmp/rascal_to_cumc_" + dateTime.toString("yyyyMMdd") + ".zip";
+        RascalZipper zipper = new RascalZipper(RootDir, zipFileName);
         try {
-            zipFiles();
+            zipper.zipFiles();
         } catch (IOException e) {
-            log.error("caught err:", e);
+            log.error("caught: ", e);
         }
     }
 
@@ -67,7 +68,6 @@ public class Extractor {
             String dirName = String.format("%s_Y%02d_M%02d", s.protocolNumber, s.protocolYear, s.modificationNumber);
             String folder = RootDir+"/"+dirName + "/" + "ATTACHED_STANDALONE_PROTOCOLS";
             folder(folder);
-            log.info("dirName={}", folder);
             String fileName = folder + "/" + s.fileName;
             blobToFile(fileName, s.bytes);
         }
@@ -87,45 +87,6 @@ public class Extractor {
             os.close();
         } catch (Exception e) {
             log.error("caught: ", e);
-        }
-    }
-
-    private void zipFiles() throws IOException {
-        File dir = new File(RootDir);
-        DateTime dateTime = DateTime.now();
-        String zipFileName = "/tmp/rascal_to_cumc_" + dateTime.toString("yyyyMMdd") + ".zip";
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFileName));
-        addDir(dir, out);
-        out.close();
-    }
-
-    private void addDir(File dir, ZipOutputStream out) throws IOException {
-        File[] files = dir.listFiles();
-        byte[] buf = new byte[1024];
-
-        for(File f : files) {
-            if (f.isDirectory()) {
-                addDir(f, out);
-                continue;
-            }
-            /*
-            FileInputStream in = new FileInputStream(f.getAbsolutePath());
-            out.putNextEntry(new ZipEntry(f.getAbsolutePath()));
-
-            FileInputStream in = new FileInputStream(f.getCanonicalPath());
-            out.putNextEntry(new ZipEntry(f.getCanonicalPath()));
-
-            */
-
-            FileInputStream in = new FileInputStream(f.getCanonicalFile());
-            out.putNextEntry(new ZipEntry(f.getCanonicalPath()));
-
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            out.closeEntry();
-            in.close();
         }
     }
 
