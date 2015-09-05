@@ -1,13 +1,14 @@
 package edu.columbia.rascal.cumc;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
-import java.io.*;
 
 @Component
 public class Extractor {
