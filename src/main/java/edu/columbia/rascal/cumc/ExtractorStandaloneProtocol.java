@@ -10,7 +10,26 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 public class ExtractorStandaloneProtocol implements RowCallbackHandler {
+
+    public static final String
+            SQL_STANDALONE_PROTOCOL = "select H.OID, P.PROTOCOLNUMBER, H.protocolYear, H.modificationnumber,"
+            + "A.FILENAME, A.DOCUMENTDATA, A.DOCUMENTDATASTAMPED, A.DOCUMENTIDENTIFIER"
+            + " from IRBPROTOCOLHEADER H "
+            + " join IRBPROTOCOL P on H.PARENTPROTOCOLOID=P.OID "
+            + " join IRBSTATUS S on S.PARENTOBJECTOID=H.OID "
+            + " join IRBATTACHMENT A on A.IRBPROTOCOLHEADERID=H.OID "
+            + " where"
+            + " H.OID = (select max(iph.OID) from IrbProtocolHeader iph"
+            + " where iph.PARENTPROTOCOLOID = H.PARENTPROTOCOLOID) and"
+            + " S.OID = (select max(ss.OID) from IrbStatus ss where ss.PARENTOBJECTOID=H.OID) and"
+            + " H.IRBAPPROVALDATE is not null and"
+            + " trunc(H.EXPIRATIONDATE) >= trunc(sysdate) and"
+            + " S.STATUSNAME='Approved' and"
+            + " A.ATTACHMENTTYPECODE=8 and"
+            + " A.ARCHIVE='N' and A.ACTIVE='Y' "
+            + " and P.PROTOCOLNUMBER='AAAJ7852'";
 
     private static final Logger log = LoggerFactory.getLogger(ExtractorStandaloneProtocol.class);
 
