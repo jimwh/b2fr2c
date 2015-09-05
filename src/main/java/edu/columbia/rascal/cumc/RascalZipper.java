@@ -1,5 +1,6 @@
 package edu.columbia.rascal.cumc;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +17,14 @@ public class RascalZipper {
 
     private static final Logger log = LoggerFactory.getLogger(RascalZipper.class);
 
-    private final File dir;
-    private final String zipFileName;
+    private File dir;
+    private String zipFileName;
+
+    public RascalZipper() {
+        DateTime dateTime = DateTime.now();
+        this.zipFileName = Extractor.RootDirectory + "_" + dateTime.toString("yyyyMMdd") + ".zip";
+        this.dir = new File(Extractor.RootDirectory);
+    }
 
     public RascalZipper(String dir, String zipFileName) {
         this.dir = new File(dir);

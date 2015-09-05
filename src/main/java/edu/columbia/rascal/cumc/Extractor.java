@@ -3,7 +3,6 @@ package edu.columbia.rascal.cumc;
 import java.io.File;
 import java.io.IOException;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +34,7 @@ public class Extractor {
         jdbcTemplate.query(ExtractorStandaloneProtocol.SQL_STANDALONE_PROTOCOL,
                 new ExtractorStandaloneProtocol());
         //
-        DateTime dateTime = DateTime.now();
-        String zipFileName = RootDirectory + "_" + dateTime.toString("yyyyMMdd") + ".zip";
-        RascalZipper zipper = new RascalZipper(RootDirectory, zipFileName);
+        RascalZipper zipper = new RascalZipper();
         try {
             zipper.zipFiles();
         } catch (IOException e) {
