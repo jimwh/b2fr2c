@@ -12,6 +12,12 @@ public class StandaloneRowMapper implements RowMapper<Standalone> {
 
     @Override
     public Standalone mapRow(ResultSet resultSet, int rownum) throws SQLException {
+        // not efficient in this case
+        return returnRow(resultSet);
+        // directly dump to file
+    }
+
+    private Standalone returnRow(ResultSet resultSet) throws SQLException {
         Blob blob = resultSet.getBlob("DOCUMENTDATASTAMPED");
         if( blob == null ) {
             blob = resultSet.getBlob("DOCUMENTDATA");
@@ -31,6 +37,7 @@ public class StandaloneRowMapper implements RowMapper<Standalone> {
                 resultSet.getInt("MODIFICATIONNUMBER"),
                 resultSet.getString("FILENAME"),
                 bytes
-                );
+        );
     }
+
 }

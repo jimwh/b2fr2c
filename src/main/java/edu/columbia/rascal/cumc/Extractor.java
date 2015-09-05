@@ -34,7 +34,7 @@ public class Extractor {
 
     private static final Logger log = LoggerFactory.getLogger(Extractor.class);
     private final JdbcTemplate jdbcTemplate;
-    public static final String RootDir = "/tmp/rascal_to_cumc";
+    public static final String RootDirectory = File.separator + "tmp" +File.separator + "rascal_to_cumc";
 
     @Autowired
     public Extractor(JdbcTemplate jt) {
@@ -43,18 +43,21 @@ public class Extractor {
 
     public void start() {
         log.info("start to exact file ...");
-        File file = new File(RootDir);
+        File file = new File(RootDirectory);
         if (!file.exists()) {
             if (!file.mkdirs()) {
                 log.error("failed to create root dir");
                 return;
             }
         }
-        extractMapper();
-
+        //
+        // extractMapper();
+        jdbcTemplate.query(SQL_STANDALONE_PROTOCOL, new ExtractorStandaloneProtocol());
+        //
+        //
         DateTime dateTime = DateTime.now();
-        String zipFileName = "/tmp/rascal_to_cumc_" + dateTime.toString("yyyyMMdd") + ".zip";
-        RascalZipper zipper = new RascalZipper(RootDir, zipFileName);
+        String zipFileName = RootDirectory + "_" + dateTime.toString("yyyyMMdd") + ".zip";
+        RascalZipper zipper = new RascalZipper(RootDirectory, zipFileName);
         try {
             zipper.zipFiles();
         } catch (IOException e) {
@@ -66,9 +69,9 @@ public class Extractor {
         List<Standalone> list = jdbcTemplate.query(SQL_STANDALONE_PROTOCOL, new StandaloneRowMapper());
         for (Standalone s : list) {
             String dirName = String.format("%s_Y%02d_M%02d", s.protocolNumber, s.protocolYear, s.modificationNumber);
-            String folder = RootDir+"/"+dirName + "/" + "ATTACHED_STANDALONE_PROTOCOLS";
+            String folder = RootDirectory + File.separator+dirName + File.separator + "ATTACHED_STANDALONE_PROTOCOLS";
             folder(folder);
-            String fileName = folder + "/" + s.fileName;
+            String fileName = folder + File.separator + s.fileName;
             blobToFile(fileName, s.bytes);
         }
     }

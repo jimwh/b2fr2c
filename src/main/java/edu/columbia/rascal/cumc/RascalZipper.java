@@ -12,6 +12,7 @@ import java.util.zip.ZipOutputStream;
 
 public class RascalZipper {
 
+    public static final String ZipFileRootDirectory = "/rascal_to_cumc";
     private static final Logger log = LoggerFactory.getLogger(RascalZipper.class);
 
     private final File dir;
@@ -38,7 +39,8 @@ public class RascalZipper {
             }
             FileInputStream in = new FileInputStream(file.getCanonicalFile());
             String path = file.getCanonicalPath();
-            path = path.replace("/tmp", "");
+            // path = path.replace("/tmp", "");
+            path = path.substring(path.indexOf(ZipFileRootDirectory));
             out.putNextEntry(new ZipEntry(path));
             int len;
             while ((len = in.read(buf)) > 0) {
