@@ -9,12 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 @Component
 public class Extractor {
 
     private static final Logger log = LoggerFactory.getLogger(Extractor.class);
     private final JdbcTemplate jdbcTemplate;
     public static final String RootDirectory = File.separator + "tmp" +File.separator + "rascal_to_cumc";
+
+    @Resource
+    private RascalZipper zipper;
 
     @Autowired
     public Extractor(JdbcTemplate jt) {
@@ -34,7 +39,6 @@ public class Extractor {
         jdbcTemplate.query(ExtractorStandaloneProtocol.SQL_STANDALONE_PROTOCOL,
                 new ExtractorStandaloneProtocol());
         //
-        RascalZipper zipper = new RascalZipper();
         try {
             zipper.zipFiles();
         } catch (IOException e) {

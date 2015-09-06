@@ -3,6 +3,7 @@ package edu.columbia.rascal.cumc;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+@Service
 public class RascalZipper {
 
     public static final String ZipFileRootDirectory = "/rascal_to_cumc";
@@ -26,7 +28,7 @@ public class RascalZipper {
         this.dir = new File(Extractor.RootDirectory);
     }
 
-    public RascalZipper(String dir, String zipFileName) {
+    public void setDirectoryAndZipFile(String dir, String zipFileName) {
         this.dir = new File(dir);
         this.zipFileName = zipFileName;
     }
