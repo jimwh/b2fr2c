@@ -28,7 +28,8 @@ public class RascalZipper {
         this.dir = new File(Extractor.RootDirectory);
     }
 
-    public void setDirectoryAndZipFile(String dir, String zipFileName) {
+    // if don't want to overwrite default directory and file name
+    public void setZipFileRootDirectory(String dir, String zipFileName) {
         this.dir = new File(dir);
         this.zipFileName = zipFileName;
     }

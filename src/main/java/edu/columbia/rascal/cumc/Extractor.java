@@ -26,7 +26,7 @@ public class Extractor {
         this.jdbcTemplate = jt;
     }
 
-    public void start() {
+    public void start() throws IOException {
         log.info("start to exact file ...");
         File file = new File(RootDirectory);
         if (!file.exists()) {
@@ -35,15 +35,12 @@ public class Extractor {
                 return;
             }
         }
-        //
+
         jdbcTemplate.query(ExtractorStandaloneProtocol.SQL_STANDALONE_PROTOCOL,
                 new ExtractorStandaloneProtocol());
-        //
-        try {
-            zipper.zipFiles();
-        } catch (IOException e) {
-            log.error("caught: ", e);
-        }
+
+        zipper.zipFiles();
+
     }
 
 }

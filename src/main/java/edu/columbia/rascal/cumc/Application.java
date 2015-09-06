@@ -9,6 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
+import java.io.IOException;
+
 @Configuration
 @EnableAutoConfiguration
 @ImportResource({"application-context.xml"})
@@ -17,7 +19,7 @@ public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         log.info("application start...");
         ApplicationContext ctx = SpringApplication.run(Application.class, args);
