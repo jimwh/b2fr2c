@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,11 @@ public class Extractor {
 
     private static final Logger log = LoggerFactory.getLogger(Extractor.class);
     private final JdbcTemplate jdbcTemplate;
-    public static final String RootDirectory = File.separator + "tmp" +File.separator + "rascal_to_cumc";
+
+    // default directory
+    // also it can be defined in application.properties
+    // such as: downloadDirectory=/tmp/rascal_to_cum
+    public static final String DefaultDownloadDirectory = File.separator + "tmp" +File.separator + "rascal_to_cumc";
 
     @Resource
     private RascalZipper zipper;
@@ -26,9 +31,17 @@ public class Extractor {
         this.jdbcTemplate = jt;
     }
 
+    @Value("${downloadDirectory}")
+    private String downloadDirectory;
+
     public void start() throws IOException {
-        log.info("start to exact file ...");
-        File file = new File(RootDirectory);
+
+        if(downloadDirectory==null) {
+            downloadDirectory = DefaultDownloadDirectory;
+        }
+        log.info("start to exact file to directory: {}", downloadDirectory);
+
+        File file = new File(downloadDirectory);
         if (!file.exists()) {
             if (!file.mkdirs()) {
                 log.error("failed to create root dir");
@@ -37,9 +50,9 @@ public class Extractor {
         }
 
         jdbcTemplate.query(ExtractorStandaloneProtocol.SQL_STANDALONE_PROTOCOL,
-                new ExtractorStandaloneProtocol());
+                new ExtractorStandaloneProtocol(downloadDirectory));
 
-        zipper.zipFiles();
+        zipper.zipFiles(downloadDirectory);
 
     }
 

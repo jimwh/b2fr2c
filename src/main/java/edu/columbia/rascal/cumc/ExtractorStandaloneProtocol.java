@@ -31,6 +31,11 @@ public class ExtractorStandaloneProtocol implements RowCallbackHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ExtractorStandaloneProtocol.class);
 
+    private final String downloadDirectory;
+    public ExtractorStandaloneProtocol(String downloadDirectory) {
+        this.downloadDirectory = downloadDirectory;
+    }
+
     @Override
     public void processRow(ResultSet resultSet) throws SQLException {
 
@@ -48,7 +53,7 @@ public class ExtractorStandaloneProtocol implements RowCallbackHandler {
         InputStream in = blob.getBinaryStream();
         //
         String dirName = String.format("%s_Y%02d_M%02d", protocolNumber, protocolYear, modificationNumber);
-        String folder = Extractor.RootDirectory + File.separator+dirName + File.separator + "ATTACHED_STANDALONE_PROTOCOLS";
+        String folder = downloadDirectory + File.separator+dirName + File.separator + "ATTACHED_STANDALONE_PROTOCOLS";
         fileName = folder + File.separator + fileName;
         new BlobToFile(folder, fileName, in);
     }
