@@ -39,7 +39,7 @@ public class Extractor {
         if(downloadDirectory==null) {
             downloadDirectory = DefaultDownloadDirectory;
         }
-        log.info("start to exact file to directory: {}", downloadDirectory);
+        log.info("start to extract file to directory: {}", downloadDirectory);
 
         File file = new File(downloadDirectory);
         if (!file.exists()) {
